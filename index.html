@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mania de Geek - Catálogo</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; margin: 0; padding: 20px; text-align: center; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { max-width: 100%; height: 180px; object-fit: cover; border-radius: 4px; background: #eee; }
+        .card h3 { font-size: 14px; margin: 10px 0; color: #333; word-break: break-word; }
+        .btn-whats { display: block; background: #25d366; color: white; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-weight: bold; margin-top: auto; }
+    </style>
+</head>
+<body>
+
+    <h1>Mania de Geek - Catálogo</h1>
+    <p>Clique no botão para solicitar o orçamento do modelo via WhatsApp</p>
+
+    <div class="grid" id="vitrine">Carregando produtos...</div>
+
+    <script>
+        const meuWhats = "5511999999999"; // <-- INSIRA SEU WHATSAPP AQUI (Apenas números com DDD)
+
+        // Buscando a lista de arquivos gerada pelo PowerShell
+        fetch('public/produtos/lista.json')
+            .then(response => response.json())
+            .then(fotos => {
+                const vitrine = document.getElementById('vitrine');
+                vitrine.innerHTML = ''; // Limpa o "Carregando"
+
+                // Filtra para ler apenas imagens, ignorando o próprio arquivo json
+                const imagens = fotos.filter(arquivo => arquivo.match(/\.(jpg|jpeg|png|webp|gif)$/i));
+
+                imagens.forEach(arquivo => {
+                    // Trata o nome do arquivo para virar o título do produto
+                    const nomeProduto = arquivo.replace(/\.[^/.]+$/, "").replace(/[+_-]/g, " ");
+                    
+                    const textoWhats = encodeURIComponent(`Olá! Gostaria de um orçamento do modelo STLs: ${nomeProduto}`);
+                    const linkWhats = `https://wa.me{meuWhats}?text=${textoWhats}`;
+
+                    vitrine.innerHTML += `
+                        <div class="card">
+                            <img src="public/produtos/${arquivo}" loading="lazy" alt="${nomeProduto}">
+                            <h3>${nomeProduto}</h3>
+                            <a href="${linkWhats}" target="_blank" class="btn-whats">Orçamento no Whats</a>
+                        </div>
+                    `;
+                });
+            })
+            .catch(err => {
+                document.getElementById('vitrine').innerHTML = "Erro ao carregar a lista de produtos. Certifique-se de que o arquivo lista.json está na pasta public/produtos/.";
+                console.error(err);
+            });
+    </script>
+</body>
+</html>
