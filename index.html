@@ -24,7 +24,7 @@
         const meuWhats = "5511999999999"; // <-- INSIRA SEU WHATSAPP AQUI (Apenas números com DDD)
 
         // Buscando a lista de arquivos gerada pelo PowerShell
-        fetch('public/produtos/lista.json')
+        fetch('lista.json')
             .then(response => response.json())
             .then(fotos => {
                 const vitrine = document.getElementById('vitrine');
